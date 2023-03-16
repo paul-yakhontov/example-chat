@@ -6,6 +6,7 @@ import {
     onSnapshot,
     limit
 } from 'firebase/firestore';
+import Message from './Message';
 import { db } from '../firebase';
 
 const ChatContainer = () => {
@@ -16,28 +17,21 @@ const ChatContainer = () => {
             collection(db, 'messages'),
             orderBy('createdAt'),
             limit(50));
+
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             let messages = [];
             querySnapshot.forEach((doc) => {
-                console.log('doc: ', doc)
-                messages.push({...doc.data(), id: doc.id})
+                messages.push({ ...doc.data(), id: doc.id })
             });
             setMessages(messages)
         });
         return () => unsubscribe;
     }, []);
 
-
     return (
         <div className='chat-container'>
             <div className='messages-wrapper'>
-            {messages?.map((message) => {
-                console.log('message: ', message)
-                return (
-                <div>
-                    <p>{message}</p>
-                </div>
-            )})}
+                {messages?.map((message) => <Message key={message.id} message={message} />)}
             </div>
             <div className='message-input-wrapper'>
             </div>
